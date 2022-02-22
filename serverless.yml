@@ -1,0 +1,78 @@
+service: work-time
+
+frameworkVersion: "2"
+
+package:
+  individually: false
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-dynamodb-autoscaling
+
+custom:
+  capacities:
+    - table: RegistriesTable
+      read:
+        minimum: 1
+        maximum: 5
+        usage: 0.75
+      write:
+        minimum: 1
+        maximum: 100 # this is a guess, a more accurate study would help determine a more fitting value
+        usage: 0.5
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["RegistriesTable", "Arn"] }
+
+functions:
+  includeRegistry:
+    handler: src/handler.includeRegistry
+    description: Includes a registry
+    memorySize: 256
+    events:
+      - http:
+          path: registry
+          method: post
+          cors: false
+  updateRegistries:
+    handler: src/handler.updateRegistries
+    description: Sends all registries to the legacy system, and clears the table
+    memorySize: 256
+    environment:
+      LEGACY_URL: ${env:LEGACY_URL}
+    events:
+      - schedule: rate(1 hour)
+
+resources:
+  Resources:
+    RegistriesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+          TableName: registries
+          AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+          KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+          ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

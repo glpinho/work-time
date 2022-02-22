@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": true,
+        "allowUnreachableCode": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false
+    },
+    "include": ["**/*.ts"]
+}

@@ -1,0 +1,12 @@
+Entendi que o principal problema seja a variação de carga de requisições, pois o
+backend ficaria ocioso na maior parte do tempo, com picos nos horários de troca
+de turno.
+
+Aspectos funcionais:
+- Registro de ponto -> simples requisição POST no sistema atual
+- Transferência periódica dos pontos para o sistema legado -> evento schedule no
+AWS Lambda
+
+Aspectos não funcionais:
+- Aplicação em nuvem -> na infraestrutura da AWS
+- Banco de dados com unidades de leitura e escrita escaláveis -> com o DynamoDB
