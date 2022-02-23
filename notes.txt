@@ -1,6 +1,6 @@
-Entendi que o principal problema seja a variação de carga de requisições, pois o
-backend ficaria ocioso na maior parte do tempo, com picos nos horários de troca
-de turno.
+Entendi que o principal problema seja o tempo de resposta do sistema legado,
+seguido da variação de carga de requisições, pois o backend ficaria ocioso na
+maior parte do tempo, com picos nos horários de troca de turno.
 
 Aspectos funcionais:
 - Registro de ponto -> simples requisição POST no sistema atual
